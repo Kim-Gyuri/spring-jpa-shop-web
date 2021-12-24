@@ -1,5 +1,6 @@
 package hello.springshop.domain;
 
+import hello.springshop.exception.NotEnoughStockException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,4 +24,23 @@ public abstract class Item {
 
     @ManyToMany(mappedBy = "items")
     private List<Category> categoryList =  new ArrayList<>();
+
+    //==비지니스 로직==//
+    /*
+    stock 증가
+     */
+    public void addStock(int quantity) {
+        this.stockQuantity = quantity;
+    }
+
+    /*
+    stock 감소
+     */
+    public void removeStock(int quantity) {
+        int restQuantity = this.stockQuantity - quantity;
+        if (restQuantity < 0) {
+            throw new NotEnoughStockException("need more stock");
+        }
+        this.stockQuantity = restQuantity;
+    }
 }
