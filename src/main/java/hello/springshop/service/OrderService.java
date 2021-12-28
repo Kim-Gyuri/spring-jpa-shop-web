@@ -4,9 +4,12 @@ import hello.springshop.domain.*;
 import hello.springshop.repository.ItemRepository;
 import hello.springshop.repository.MemberRepository;
 import hello.springshop.repository.OrderRepository;
+import hello.springshop.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -56,7 +59,9 @@ public class OrderService {
     /*
     검색
      */
-//    public List<Order> findOrders(OrderSearch orderSearch){ }
+    public List<Order> findOrders(OrderSearch orderSearch){
+        return orderRepository.findAllByString(orderSearch);
+    }
 
 
 }

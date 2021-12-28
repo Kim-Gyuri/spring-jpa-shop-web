@@ -28,4 +28,9 @@ public class ItemRepository {
         return em.createQuery("select i  from Item i", Item.class)
                 .getResultList();
     }
+
+    public void delete(Long id) {
+        em.createQuery("delete from Item i where i.id = :id")
+                .setParameter("id", id).executeUpdate();
+    }
 }
