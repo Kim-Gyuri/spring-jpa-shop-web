@@ -1,5 +1,6 @@
 package hello.springshop.repository;
 
+import hello.springshop.domain.Book;
 import hello.springshop.domain.Item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -32,5 +33,9 @@ public class ItemRepository {
     public void delete(Long id) {
         em.createQuery("delete from Item i where i.id = :id")
                 .setParameter("id", id).executeUpdate();
+    }
+
+    public Book findBook(Long itemId) {
+        return em.find(Book.class, itemId);
     }
 }
