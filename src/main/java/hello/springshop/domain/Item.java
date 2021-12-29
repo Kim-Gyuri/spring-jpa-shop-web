@@ -25,6 +25,9 @@ public abstract class Item {
     @ManyToMany(mappedBy = "items")
     private List<Category> categoryList =  new ArrayList<>();
 
+    protected Item(String name, int price, int stockQuantity) {
+    }
+
     //==비지니스 로직==//
     /*
     stock 증가
@@ -42,5 +45,11 @@ public abstract class Item {
             throw new NotEnoughStockException("need more stock");
         }
         this.stockQuantity = restQuantity;
+    }
+
+    protected void addItem(String name, int price, int stockQuantity) {
+        this.name = name;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
     }
 }
