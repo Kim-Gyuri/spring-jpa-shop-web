@@ -2,14 +2,15 @@ package hello.springshop.controller;
 
 import hello.springshop.domain.Book;
 import hello.springshop.domain.Item;
-import hello.springshop.repository.dto.SaveItemDto;
-import hello.springshop.repository.dto.UpdateItemDto;
 import hello.springshop.service.ItemService;
 import hello.springshop.web.BookForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -26,8 +27,14 @@ public class ItemController {
     }
 
     @PostMapping("/items/new")
-    public String create(@PathVariable("itemId")Long itemId, @RequestBody SaveItemDto saveItemDto) {
-        itemService.saveItem(saveItemDto);
+    public String create(BookForm form) {
+        Book book = new Book();
+        book.setName(form.getName());
+        book.setPrice(form.getPrice());
+        book.setStockQuantity(form.getStockQuantity());
+        book.setAuthor(form.getAuthor());
+
+        itemService.saveItem(book);
         return "redirect:/";
     }
 
@@ -55,7 +62,7 @@ public class ItemController {
 
     @PostMapping("items/{itemId}/edit")
     public String updateItem(@PathVariable("itemId") Long itemId, @ModelAttribute("form") BookForm form) {
-        itemService.updateItem(new UpdateItemDto(form));
+        itemService.updateItem(itemId, form.getName(), form.getPrice(), form.getStockQuantity());
         return "redirect:/items";
     }
 

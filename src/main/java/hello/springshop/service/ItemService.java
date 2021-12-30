@@ -1,9 +1,6 @@
 package hello.springshop.service;
 
-import hello.springshop.domain.Book;
 import hello.springshop.domain.Item;
-import hello.springshop.repository.dto.SaveItemDto;
-import hello.springshop.repository.dto.UpdateItemDto;
 import hello.springshop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,21 +16,18 @@ import java.util.List;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-/*
+
     @Transactional
     public void saveItem(Item item) {
         itemRepository.save(item);
     }
-*/
-    @Transactional
-    public Long save(SaveItemDto saveItemDto) {
-        return itemRepository.saveDto(saveItemDto.toEntity().getId());
-    }
 
     @Transactional
-    public void updateItem(UpdateItemDto updateItemDto) {
-        Book foundedItem = (Book) itemRepository.findOne(updateItemDto.getId());
-        foundedItem.updateBook(updateItemDto);
+    public void updateItem(Long itemId, String name, int price, int stockQuantity) {
+        Item item = itemRepository.findOne(itemId);
+        item.setName(name);
+        item.setPrice(price);
+        item.setStockQuantity(stockQuantity);
         log.info("update 실행");
     }
 
