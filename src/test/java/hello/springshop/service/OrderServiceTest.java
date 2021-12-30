@@ -2,6 +2,7 @@ package hello.springshop.service;
 
 import hello.springshop.domain.*;
 import hello.springshop.exception.NotEnoughStockException;
+import hello.springshop.repository.ItemRepository;
 import hello.springshop.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,18 +24,23 @@ class OrderServiceTest {
     @Autowired EntityManager em;
     @Autowired OrderService orderService;
     @Autowired OrderRepository orderRepository;
+    @Autowired ItemService itemService;
+    @Autowired ItemRepository itemRepository;
 
     @Test
     public void 상품주문() throws Exception {
         //given
         Member member = createMember();
 
-        Book book = createBook("시골 JPA", 10000, 10);
+        //Book book = createBook("시골 JPA", 10000, 10);
+
+        Book book = Book.createItem("시골 JPA", 10000, 10,"AA", "BB");
 
         int orderCount = 2;
 
         //when
         Long orderId = orderService.order(member.getId(), book.getId(), orderCount);
+
 
         //then
         Order getOrder = orderRepository.findOne(orderId);
@@ -50,16 +56,19 @@ class OrderServiceTest {
     public void 상품주문_재고수량초과() throws Exception {
         //give
         Member member = createMember();
-        Item item = createBook("시골 JPA", 10000, 10);
+       // Item item = createBook("시골 JPA", 10000, 10);
+      //  Book book = new Book();
+       // book.getClass().getDeclaredMethod("createItem", "시골 JPA", 10000, 10,"AA","BB");
+        Book book = Book.createItem("시골 JPA", 10000, 10,"AA", "BB");
 
         int orderCount = 11;
 
         //when
-        orderService.order(member.getId(), item.getId(), orderCount);
+        orderService.order(member.getId(), book.getId(), orderCount);
 
         //then
         NotEnoughStockException ex = assertThrows(NotEnoughStockException.class, () -> {
-            orderService.order(member.getId(), item.getId(), orderCount);
+            orderService.order(member.getId(), book.getId(), orderCount);
         });
         assertEquals(ex.getMessage(), "need more Stock");
     }
@@ -68,10 +77,11 @@ class OrderServiceTest {
     public void 주문취소() throws Exception {
         //given
         Member member = createMember();
-        Book item = createBook("시골 JPA", 10000, 10);
+//        Book item = createBook("시골 JPA", 10000, 10);
+        Book book = Book.createItem("시골 JPA", 10000, 10,"AA", "BB");
 
         int orderCount = 2;
-        Long orderId = orderService.order(member.getId(), item.getId(), orderCount);
+        Long orderId = orderService.order(member.getId(), book.getId(), orderCount);
 
         //when
         orderService.cancelOrder(orderId);
@@ -80,10 +90,10 @@ class OrderServiceTest {
         Order getOrder = orderRepository.findOne(orderId);
 
         assertEquals(OrderStatus.CANCEL, getOrder.getStatus(),"주문 취소시 상태는 CANCEL");
-        assertEquals(10,item.getStockQuantity(),"주문이 취소된 상품은 그만큼 재고가 증가해야 한다.");
+        assertEquals(10, book.getStockQuantity(),"주문이 취소된 상품은 그만큼 재고가 증가해야 한다.");
     }
 
-
+/*
     private Book createBook(String name, int price, int stockQuantity) {
         Book book = new Book();
         book.setName(name);
@@ -92,7 +102,7 @@ class OrderServiceTest {
         em.persist(book);
         return book;
     }
-
+*/
     private Member createMember() {
         Member member = new Member();
         member.setName("회원1");
