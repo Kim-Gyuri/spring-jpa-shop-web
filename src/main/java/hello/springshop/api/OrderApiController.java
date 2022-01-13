@@ -10,6 +10,7 @@ import hello.springshop.repository.order.query.OrderFlatDto;
 import hello.springshop.repository.order.query.OrderItemQueryDto;
 import hello.springshop.repository.order.query.OrderQueryDto;
 import hello.springshop.repository.order.query.OrderQueryRepository;
+import hello.springshop.service.query.OrderQueryService;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +33,13 @@ public class OrderApiController {
     @GetMapping("/api/v1/orders")
     public List<Order> orderV1() {
         List<Order> all= orderRepository.findAllByString(new OrderSearch());
+        /*프록시 객체들을 강제로 초기화 하는 것*/
         for (Order order : all) {
-            order.getMember().getName();
-            order.getDelivery().getAddress();
+            order.getMember().getName(); //member 테이블
+            order.getDelivery().getAddress(); //delivery 테이블
             //추가
-            List<OrderItem> orderItems = order.getOrderItems();
-            orderItems.stream().forEach(o -> o.getItem().getName());
+            List<OrderItem> orderItems = order.getOrderItems();  //orderItem 테이블
+            orderItems.stream().forEach(o -> o.getItem().getName()); //item 테이블
         }
         return all;
     }
@@ -50,7 +52,7 @@ public class OrderApiController {
                 .collect(Collectors.toList());
         return result;
     }
-
+/*
     @GetMapping("/api/v3/orders")
     public List<OrderDto> ordersV3() {
         List<Order> orders = orderRepository.findAllWithMemberDelivery();
@@ -61,6 +63,13 @@ public class OrderApiController {
                 .map(o -> new OrderDto(o))
                 .collect(Collectors.toList());
         return result;
+    }
+*/
+    private final OrderQueryService orderQueryService;
+
+    @GetMapping("/api/v3/orders")
+    public List<hello.springshop.service.query.OrderDto> ordersV3() {
+        return orderQueryService.ordersV3();
     }
 
     @GetMapping("/api/v3.1/orders")
